@@ -63,7 +63,7 @@ RUN if [ -n "$TOKEN" ] && [ "$PREMIUM" == "ENTERPRISE" ]; then \
 
 RUN mv /etc/apk/repositories_backup /etc/apk/repositories;
 
-VOLUME ["/etc/kea", "/run/kea", "/var/log/kea"]
+VOLUME ["/etc/kea", "/var/log/kea"]
 
 # 8080 ctrl agent
 # 8081 ha mt
