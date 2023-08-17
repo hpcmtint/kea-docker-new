@@ -6,8 +6,9 @@
 # - open source hooks
 # - possible to build with premium hooks
 
-# build dockebuild --build-arg TOKEN=<TOKEN> --build-arg VERSION=2.3.8-r20230530063557 --build-arg PREMIUM=ENTERPRISE - < docker/kea-dhcp4.Dockerfile -t kea-2.3.8-enterprise
-# docker run --volume=/Users/wlodek/dev/docker/kea-docker/files/etc/kea:/etc/kea --volume=/Users/wlodek/dev/docker/kea-docker/files/run/kea:/run/kea --volume=/Users/wlodek/dev/docker/kea-docker/files/var/log/kea:/var/log/kea --network=host kea-2.3.8-enterprise
+# build dockebuild --build-arg VERSION=2.3.8-r20230530063557 - < docker/kea-dhcp4.Dockerfile -t kea-2.3.8-enterprise
+#   to add premium hooks --build-arg TOKEN=<TOKEN> --build-arg PREMIUM=ENTERPRISE
+# docker run --volume=<absolute path to kea docker repo>/kea-docker/files/etc/kea:/etc/kea --volume=<absolute path to kea docker repo>/kea-docker/files/var/log/kea:/var/log/kea --network=host kea-2.3.8-enterprise
 
 FROM alpine:3.17
 LABEL org.opencontainers.image.authors="Kea Developers <kea-dev@lists.isc.org>"
@@ -16,6 +17,7 @@ LABEL org.opencontainers.image.authors="Kea Developers <kea-dev@lists.isc.org>"
 # Also, install all the open source hooks. When updating, new instructions can
 # be found at: https://cloudsmith.io/~isc/repos/kea-2-3/setup/#formats-alpine
 ARG VERSION
+RUN cp /etc/apk/repositories /etc/apk/repositories_backup
 RUN apk update && apk add curl && \
     curl -1sLf 'https://dl.cloudsmith.io/public/isc/kea-2-3/rsa.67D22B06FDC8FD58.key' > /etc/apk/keys/kea-2-3@isc-67D22B06FDC8FD58.rsa.pub && \
     curl -1sLf 'https://dl.cloudsmith.io/public/isc/kea-2-3/config.alpine.txt?distro=alpine&codename=v3.17' >> /etc/apk/repositories && \
@@ -27,7 +29,6 @@ ARG TOKEN
 ARG PREMIUM
 
 RUN if [ -n "$TOKEN" ]; then \
-    cp /etc/apk/repositories /etc/apk/repositories_backup && \
     curl -1sLf "https://dl.cloudsmith.io/${TOKEN}/isc/kea-2-3-prv/rsa.3ACDF039B17886F3.key" > /etc/apk/keys/kea-2-3-prv@isc-3ACDF039B17886F3.rsa.pub &&  \
     curl -1sLf "https://dl.cloudsmith.io/${TOKEN}/isc/kea-2-3-prv/config.alpine.txt?distro=alpine&codename=v3.17" >> /etc/apk/repositories && \
     apk update && \
