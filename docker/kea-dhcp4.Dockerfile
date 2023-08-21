@@ -66,14 +66,11 @@ RUN mv /etc/apk/repositories_backup /etc/apk/repositories;
 RUN mkdir -p /var/log/supervisor
 VOLUME ["/etc/kea", "/etc/supervisor/conf.d/"]
 
-# 8080 ctrl agent
+# 9000-9010/tcp ctrl agent, if multiple dockers are used ports have to be different between them
 # 8081 ha mt
 # 67 tcp blq
 # 67 udp dhcp
-EXPOSE 8000/udp 8080-9010/tcp 90/tcp 67/tcp 67/udp
-
-# ENTRYPOINT ["/bin/sh"]
-# CMD ["./etc/kea/start.sh 4"]
+EXPOSE 8081/udp 9000-9010/tcp 90/tcp 67/tcp 67/udp
 
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 HEALTHCHECK CMD [ "supervisorctl", "status" ]

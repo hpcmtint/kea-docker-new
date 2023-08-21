@@ -18,11 +18,24 @@ corresponds to your actual network.
 # Building image
 
 You need to have Docker installed. The image can be built using the following
-command:
+command (build argument VERSION is mandatory):
 
 ```shell
-docker build - < docker/kea-dhcp4.Dockerfile
+docker build --build-arg VERSION=2.3.8-r20230530063557 - < docker/kea-dhcp4.Dockerfile
 ```
+
+If user have access to premium packages it should be added dufing build process:
+
+```shell
+docker build --build-arg VERSION=2.3.8-r20230530063557 --build-arg TOKEN=<TOKEN> - < docker/kea-dhcp4.Dockerfile
+```
+
+If provided token grants access to subcribers or enterprise packages it should be specified:
+
+```shell
+docker build --build-arg VERSION=2.3.8-r20230530063557 --build-arg TOKEN=<TOKEN> --build-arg PREMIUM=ENTERPRISE - < docker/kea-dhcp4.Dockerfile
+```
+
 
 This will end up with something like the following:
 
@@ -38,11 +51,17 @@ At the very least, you should tweak the following:
   classes and much more) to `/etc/kea/kea-dhcp4.conf`.
 - configure TLS
 - possibly configure leases, host, and/or config backends to point to specific databases
+- IP address on which Control Agent will listen to the traffic
 
-Now you can run this image:
+Using supervisor it's possible to start dhcp and control agent in the same container:
 
 ```shell
-docker run <image-id>
+sudo docker run --volume=<path to kea-docker repo>/config/kea/kea-dhcp4.conf:/etc/kea/kea-dhcp4.conf  \
+                --volume=<path to kea-docker repo>/config/kea/kea-ctrl-agent-4.conf:/etc/kea/kea-ctrl-agent.conf  \
+                --volume=<path to kea-docker repo>/config/supervisor/supervisord.conf:/etc/supervisor/supervisord.conf \
+                --volume=<path to kea-docker repo>/config/supervisor/kea-dhcp4.conf:/etc/supervisor/conf.d/kea-dhcp4.conf \
+                --volume=<path to kea-docker repo>/config/supervisor/kea-agent.conf:/etc/supervisor/conf.d/kea-agent.conf \
+                --network=host  <image-id>
 ```
 
 ## Support
