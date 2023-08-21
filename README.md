@@ -24,7 +24,7 @@ command (build argument VERSION is mandatory):
 docker build --build-arg VERSION=2.3.8-r20230530063557 - < docker/kea-dhcp4.Dockerfile
 ```
 
-If user have access to premium packages it should be added dufing build process:
+If a user has access to premium packages, it should be added during the build process:
 
 ```shell
 docker build --build-arg VERSION=2.3.8-r20230530063557 --build-arg TOKEN=<TOKEN> - < docker/kea-dhcp4.Dockerfile
