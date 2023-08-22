@@ -61,7 +61,7 @@ sudo docker run --volume=<path to kea-docker repo>/config/kea/kea-dhcp4.conf:/et
                 --volume=<path to kea-docker repo>/config/supervisor/supervisord.conf:/etc/supervisor/supervisord.conf \
                 --volume=<path to kea-docker repo>/config/supervisor/kea-dhcp4.conf:/etc/supervisor/conf.d/kea-dhcp4.conf \
                 --volume=<path to kea-docker repo>/config/supervisor/kea-agent.conf:/etc/supervisor/conf.d/kea-agent.conf \
-                --network=host  <image-id>
+                -p host_ip:host_port:container_port <image-id>
 ```
 
 ## Support

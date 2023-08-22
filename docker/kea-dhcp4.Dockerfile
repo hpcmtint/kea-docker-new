@@ -23,7 +23,6 @@ RUN apk update && apk add curl && \
     curl -1sLf 'https://dl.cloudsmith.io/public/isc/kea-2-3/config.alpine.txt?distro=alpine&codename=v3.17' >> /etc/apk/repositories && \
     apk update && \
     apk add --no-cache isc-kea-dhcp4=${VERSION} isc-kea-ctrl-agent=${VERSION} isc-kea-hooks=${VERSION} supervisor
-    # apk add --no-cache isc-kea-dhcp4 isc-kea-ctrl-agent isc-kea-hooks
 
 ARG TOKEN
 ARG PREMIUM
@@ -64,13 +63,12 @@ RUN if [ -n "$TOKEN" ] && [ "$PREMIUM" == "ENTERPRISE" ]; then \
 
 RUN mv /etc/apk/repositories_backup /etc/apk/repositories;
 RUN mkdir -p /var/log/supervisor
-VOLUME ["/etc/kea", "/etc/supervisor/conf.d/"]
+VOLUME ["/etc/kea", "/var/lib/kea/", "/etc/supervisor/conf.d/"]
 
-# 9000-9010/tcp ctrl agent, if multiple dockers are used ports have to be different between them
-# 8081 ha mt
-# 67 tcp blq
-# 67 udp dhcp
-EXPOSE 8081/udp 9000-9010/tcp 90/tcp 67/tcp 67/udp
+# 8000 ctrl agent
+# 8001 HA MT
+# 67 blq
+EXPOSE 8000-8001/tcp 67/tcp 67/udp
 
 CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 HEALTHCHECK CMD [ "supervisorctl", "status" ]
